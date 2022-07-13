@@ -12,9 +12,9 @@ import { Task, CheckBall } from './style'
 // Functions
 import { 
   rightSwipeActions, 
-  leftSwipeActions,
   swipeFromRightOpen,
-  swipeFromLeftOpen
+  // leftSwipeActions,
+  // swipeFromLeftOpen
 } from '../../utils/swipes'
 
 export default function TaskItem({id, description, date}) {
@@ -26,9 +26,9 @@ export default function TaskItem({id, description, date}) {
   return (
     <Swipeable
       renderRightActions={rightSwipeActions}
-      renderLeftActions={leftSwipeActions}
       onSwipeableRightOpen={() => swipeFromRightOpen(id)}
-      onSwipeableLeftOpen={() => swipeFromLeftOpen(id)}
+      // renderLeftActions={leftSwipeActions}
+      // onSwipeableLeftOpen={() => swipeFromLeftOpen(id)}
     >
       <TouchableOpacity onPress={() => setChecked(!isChecked)}>
         <Task theme_context={theme}> 

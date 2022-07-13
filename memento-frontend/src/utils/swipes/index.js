@@ -1,6 +1,6 @@
 import { StyleSheet, View, Text } from 'react-native'
 import FontAwesome from 'react-native-vector-icons/FontAwesome'
-import FontAwesome5 from 'react-native-vector-icons/FontAwesome5'
+// import FontAwesome5 from 'react-native-vector-icons/FontAwesome5'
 
 export const rightSwipeActions = () => {
   return (
@@ -13,22 +13,22 @@ export const rightSwipeActions = () => {
     </View>
   )
 }
-export const leftSwipeActions = () => {
-  return (
-    <View style={[styles.swipe, styles.leftSwipe]}>
-      <FontAwesome5
-        name="edit"
-        size={18}
-        color="#fff"
-      />
-    </View>
-  )
-}
+// export const leftSwipeActions = () => {
+//   return (
+//     <View style={[styles.swipe, styles.leftSwipe]}>
+//       <FontAwesome5
+//         name="edit"
+//         size={18}
+//         color="#fff"
+//       />
+//     </View>
+//   )
+// }
 
 export const swipeFromRightOpen = async (item) => {
 }
-export const swipeFromLeftOpen = async (item) => {
-}
+// export const swipeFromLeftOpen = async (item) => {
+// }
 
 const styles = StyleSheet.create({
   swipe: {
@@ -36,11 +36,11 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     height: "100%"
   },
-  leftSwipe: {
-    backgroundColor: '#c9ac04',
-    alignItems: 'flex-start',
-    paddingLeft: 15
-  },
+  // leftSwipe: {
+  //   backgroundColor: '#c9ac04',
+  //   alignItems: 'flex-start',
+  //   paddingLeft: 15
+  // },
   rightSwipe: {
     backgroundColor: '#c33333',
     alignItems: 'flex-end',

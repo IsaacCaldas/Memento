@@ -26,3 +26,12 @@ export const ButtonLabel = styled.Text`
   color: ${({dark}) => dark ? '#111' : '#efefef'};
   font-weight: ${({bold}) => bold ? 'bold' : 'normal'};
 `
+export const Input = styled.TextInput`
+  width: 100%;
+  height: 40px;
+  padding: 15px;
+  margin: 10px 0;
+  background-color: ${({theme_context}) => theme_context ? '#dfdfdf' : '#2c2c2c'};
+  border: none;
+  border-radius: 5px;
+`

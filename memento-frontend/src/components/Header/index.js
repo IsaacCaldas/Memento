@@ -9,14 +9,19 @@ import { Display } from './style'
 
 export default function TaskList() {
 
-  const { theme, setTheme, datePeriod } = useContext(Context);
-
-  const [isEnabled, setIsEnabled] = useState(false)
-
-  const [bg_theme, setBgTheme] = useState()
-  const toggleSwitch = () => setIsEnabled(previousState => !previousState);
+  const { theme, setTheme, datePeriod, 
+    isVisible, setVisibility } = useContext(Context);
 
   const display_colors = ['#468a6a', '#4e69ed', '#bf0a4c']
+
+  const [isEnabled, setIsEnabled] = useState(false)
+  const [bg_theme, setBgTheme] = useState()
+
+  const toggleSwitch = () => setIsEnabled(previousState => !previousState);
+
+  const onCancel = () => {
+    console.log('Hello World!')
+  }
 
   useEffect(() => {
     switch (datePeriod) {  
@@ -47,8 +52,10 @@ export default function TaskList() {
           >
             <ButtonLabel bold>{theme ? 'Dark' : 'Light'} mode</ButtonLabel>
           </Button>
-          <Button onPress={() => setTheme(!theme)}>
-            <ButtonLabel bold>Nova tarefa</ButtonLabel>
+          <Button 
+            bg_color={!theme && '#bbb4'}
+            onPress={() => setVisibility(!isVisible)}>
+            <ButtonLabel bold>{isVisible ? 'Cancelar' : 'Nova tarefa'}</ButtonLabel>
           </Button>
         </View>
       </Display>

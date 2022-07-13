@@ -5,6 +5,7 @@ import { Picker } from '@react-native-picker/picker';
 import { Context } from '../../context/context'
 
 import Task from '../Task'
+import InputTask from '../InputTask';
 
 export default function TaskList() {
 
@@ -32,13 +33,14 @@ export default function TaskList() {
   ]
 
   return (
-    <View style={[styles.container, { backgroundColor: theme ? '#fcfcfc' : '#222'}]}>
+    <View style={[styles.container, { backgroundColor: theme ? '#fcfcfc' : '#212121'}]}>
       { tasks ? 
         <>
+          <InputTask/>
           <View style={styles.pickerArea}>
             <Picker style={[styles.picker, {  
-                backgroundColor: theme ? '#e4e4e4' : '#2f2f2f',
-                borderColor: theme ? '#fcfcfc' : '#2e2e2e',
+                backgroundColor: theme ? '#e4e4e4' : '#1b1b1b',
+                borderColor: theme ? '#fcfcfc' : '#1d1d1d',
                 color: theme ? '#222' : '#efefef'
               }]}
               selectedValue={datePeriod}
