@@ -1,7 +1,9 @@
 import { useState, useContext, useEffect } from 'react'
-import { StyleSheet, View, Switch } from 'react-native'
+import { StyleSheet, View, TouchableOpacity } from 'react-native'
 
 import { Context } from '../../context/context'
+
+import Ionicons from 'react-native-vector-icons/Ionicons';
 
 // Styles
 import { Container, Label, Button, ButtonLabel  } from '../../styles/global_styles'
@@ -10,7 +12,9 @@ import { Display } from './style'
 export default function TaskList() {
 
   const { theme, setTheme, datePeriod, 
-    isVisible, setVisibility } = useContext(Context);
+    isVisible, setVisibility,
+    hiddenTasks, setHiddenTasks
+  } = useContext(Context);
 
   const display_colors = ['#468a6a', '#4e69ed', '#bf0a4c']
 
@@ -45,18 +49,27 @@ export default function TaskList() {
           <Label color="#efefef" size={30} weight='bold' bottom={10}>{datePeriod}</Label>
           <Label color="#efefef" size={15} weight={500}>Qui, 7 de julho</Label>
         </View>
-        <View style={[styles.box, { alignContent: 'flex-end', alignItems: 'flex-end' }]}>
-          <Button bg_color={!theme && '#bbb4'}
-            margin={'0 0 10px 0'}
-            onPress={() => setTheme(!theme)}
-          >
-            <ButtonLabel bold>{theme ? 'Dark' : 'Light'} mode</ButtonLabel>
-          </Button>
-          <Button 
+        <View style={[styles.box, { alignItems: 'flex-end' }]}>
+          <View style={{
+            flexDirection: 'row', justifyContent: 'flex-end'
+          }}>
+            <TouchableOpacity onPress={() => setHiddenTasks(!hiddenTasks)}>
+              <Ionicons name={hiddenTasks ? 'eye' : 'eye-off'} 
+                size={30} color="#efefef" />
+            </TouchableOpacity>
+            <TouchableOpacity onPress={() => setTheme(!theme)}>
+              <Ionicons style={{marginLeft: 15}}
+                name={`ios-${theme ? 'sunny' : 'moon'}`} 
+                size={30} color={theme ? '#f5da11'  : '#ffff00'}
+              />
+            </TouchableOpacity>
+          </View>
+          <Button margin={'10px 0'}
             bg_color={!theme && '#bbb4'}
             onPress={() => setVisibility(!isVisible)}>
             <ButtonLabel bold>{isVisible ? 'Cancelar' : 'Nova tarefa'}</ButtonLabel>
           </Button>
+        
         </View>
       </Display>
     </Container>

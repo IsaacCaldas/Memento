@@ -1,15 +1,22 @@
-import { useContext } from 'react'
+import { useState, useEffect, useContext } from 'react'
 import { StyleSheet, View, FlatList, ActivityIndicator } from 'react-native'
 import { Picker } from '@react-native-picker/picker';
+import moment from 'moment';
+import 'moment/locale/pt-br'
 
 import { Context } from '../../context/context'
+import { tasks_list } from './tasks';
 
 import Task from '../Task'
 import InputTask from '../InputTask';
 
 export default function TaskList() {
 
-  const { theme, datePeriod, setDatePeriod } = useContext(Context)
+  const { theme, datePeriod, setDatePeriod, hiddenTasks } = useContext(Context)
+
+  // const tasks = null
+  const [tasks, setTasks] = useState(tasks_list)
+  const [visibleTasks, setTaskVisibility] = useState()
 
   const date_period = [
     { id: 0, name: "Hoje" }, 
@@ -17,20 +24,34 @@ export default function TaskList() {
     { id: 2, name: "Este mês" }
   ]
 
-  // const tasks = null
-  const tasks = [
-    { id: 0, description: 'Fazer compras no supermercado', date: 'Hoje, 7 de julho'},
-    { id: 1, description: 'Levar os cachorros para passear', date: 'Hoje, 7 de julho'},
-    { id: 2, description: 'Buscar a encomenda no correio', date: 'Sex, 8 de julho'},
-    { id: 3, description: 'Pagar a academia', date: 'Sex, 8 de julho'},
-    { id: 4, description: 'Comprar as passagens para o camping', date: 'Hoje, 7 de julho'},
-    { id: 5, description: 'Chamar o encanador', date: 'Seg, 11 de julho'},
-    { id: 6, description: 'Comprar remédio de gripe', date: 'Seg, 11 de julho'},
-    { id: 7, description: 'Levar o carro para revisão', date: 'Seg, 11 de julho'},
-    { id: 8, description: 'Tirar uma cópia da chave de casa', date: 'Seg, 11 de julho'},
-    { id: 9, description: 'Pagar a faculdade', date: 'Seg, 11 de julho'},
-    { id: 10, description: 'Fazer uma festa de aniversário', date: 'Sáb, 16 de julho'},
-  ]
+
+  useEffect(() => {
+    handleVisibility()
+  }, [hiddenTasks])
+
+  function handleVisibility() {
+    let visible_tasks = null
+
+    if(hiddenTasks) {
+      visible_tasks = [...tasks]
+    } else {
+      visible_tasks = tasks.filter(task => task.done === false)
+    }
+
+    setTaskVisibility(visible_tasks)
+  }
+
+  function handleTask(id) {
+    let arr_changed = [...tasks]
+    arr_changed.map(task => {
+      if (task.id == id) {
+        task.done ? task.done = false : task.done = true
+        task.updated_at = new Date()
+      }
+    })
+    setTasks(arr_changed)
+    handleVisibility()
+  }
 
   return (
     <View style={[styles.container, { backgroundColor: theme ? '#fcfcfc' : '#212121'}]}>
@@ -50,9 +71,13 @@ export default function TaskList() {
             </Picker>
           </View>
           <FlatList
-            data={tasks}
+            data={visibleTasks}
             keyExtractor={item => item.id.toString()}
-            renderItem={({ item, index }) => <Task key={index} id={item.id} description={item.description} date={item.date}/>}
+            renderItem={({ item, index }) => <Task key={index} id={item.id} 
+              description={item.description} done={item.done} 
+              updated_at={item.updated_at} created_at={item.created_at}
+              handleTask={handleTask}/>
+            }
           />
         </>
       :
