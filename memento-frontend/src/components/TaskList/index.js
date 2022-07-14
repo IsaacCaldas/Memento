@@ -1,29 +1,29 @@
 import { useState, useEffect, useContext } from 'react'
-import { StyleSheet, View, FlatList, ActivityIndicator } from 'react-native'
+import { StyleSheet, View, FlatList, ActivityIndicator, Platform } from 'react-native'
 import { Picker } from '@react-native-picker/picker';
-import moment from 'moment';
 import 'moment/locale/pt-br'
 
 import { Context } from '../../context/context'
 import { tasks_list } from './tasks';
+import { Label, Button, ButtonLabel  } from '../../styles/global_styles'
 
 import Task from '../Task'
 import InputTask from '../InputTask';
 
 export default function TaskList() {
 
-  const { theme, datePeriod, setDatePeriod, hiddenTasks } = useContext(Context)
+  const { theme, isVisible, datePeriod, setDatePeriod, hiddenTasks } = useContext(Context)
 
   // const tasks = null
   const [tasks, setTasks] = useState(tasks_list)
   const [visibleTasks, setTaskVisibility] = useState()
+  const [pickerIos, setIsIos] = useState(false)
 
   const date_period = [
     { id: 0, name: "Hoje" }, 
     { id: 1, name: "Esta semana" }, 
     { id: 2, name: "Este mês" }
   ]
-
 
   useEffect(() => {
     handleVisibility()
@@ -53,32 +53,54 @@ export default function TaskList() {
     handleVisibility()
   }
 
+  const others = {
+    backgroundColor: theme ? '#e4e4e4' : '#1b1b1b',
+    borderColor: theme ? '#fcfcfc' : '#1d1d1d',
+    color: theme ? '#222' : '#efefef',
+  }
+
   return (
     <View style={[styles.container, { backgroundColor: theme ? '#fcfcfc' : '#212121'}]}>
       { tasks ? 
         <>
-          <InputTask/>
-          <View style={styles.pickerArea}>
-            <Picker style={[styles.picker, {  
-                backgroundColor: theme ? '#e4e4e4' : '#1b1b1b',
-                borderColor: theme ? '#fcfcfc' : '#1d1d1d',
-                color: theme ? '#222' : '#efefef'
-              }]}
-              selectedValue={datePeriod}
-              onValueChange={(itemValue, itemIndex) => {setDatePeriod(itemValue)}}
-            >
-              {date_period.map(date => <Picker.Item label={date.name} key={date.id} value={date.name} /> )}
-            </Picker>
-          </View>
-          <FlatList
-            data={visibleTasks}
-            keyExtractor={item => item.id.toString()}
-            renderItem={({ item, index }) => <Task key={index} id={item.id} 
-              description={item.description} done={item.done} 
-              updated_at={item.updated_at} created_at={item.created_at}
-              handleTask={handleTask}/>
+          { isVisible ? <InputTask/>
+          :
+          <>
+            {Platform.OS !== 'ios' ? 
+              <>
+                <Picker style={[styles.picker, others]}
+                  selectedValue={datePeriod}
+                  onValueChange={(itemValue, itemIndex) => {setDatePeriod(itemValue)}}
+                >
+                  {date_period.map(date => <Picker.Item label={date.name} key={date.id} value={date.name} /> )}
+                </Picker>
+              </>
+            :
+              <>
+                <Button bg_color={bgTheme} onPress={() => setIsIos(!pickerIos)}>
+                  <ButtonLabel bold>{pickerIos ? 'Salvar' : 'Selecionar período'}</ButtonLabel>
+                </Button>
+                { pickerIos && 
+                  <Picker style={{marginBottom: 100}}
+                    selectedValue={datePeriod}
+                    onValueChange={(itemValue, itemIndex) => {setDatePeriod(itemValue)}}
+                  >
+                    {date_period.map(date => <Picker.Item label={date.name} key={date.id} value={date.name} /> )}
+                  </Picker>
+                }
+              </>
             }
-          />
+            <FlatList
+              data={visibleTasks}
+              keyExtractor={item => item.id.toString()}
+              renderItem={({ item, index }) => <Task key={index} id={item.id} 
+                description={item.description} done={item.done} estimated_at={item.estimated_at}
+                updated_at={item.updated_at} created_at={item.created_at}
+                handleTask={handleTask}/>
+              }
+            />
+          </>
+          }
         </>
       :
         <ActivityIndicator size="large" color="#468a6a"/>
@@ -104,5 +126,5 @@ const styles = StyleSheet.create({
     borderWidth: 0,
     padding: 10,
     fontWeight: 'bold'
-  },
+  }
 })

@@ -9,7 +9,7 @@ import Ionicons from 'react-native-vector-icons/Ionicons';
 import { Container, Label, Button, ButtonLabel  } from '../../styles/global_styles'
 import { Display } from './style'
 
-export default function TaskList() {
+export default function Header() {
 
   const { theme, setTheme, datePeriod, 
     isVisible, setVisibility,
@@ -18,14 +18,7 @@ export default function TaskList() {
 
   const display_colors = ['#468a6a', '#4e69ed', '#bf0a4c']
 
-  const [isEnabled, setIsEnabled] = useState(false)
   const [bg_theme, setBgTheme] = useState()
-
-  const toggleSwitch = () => setIsEnabled(previousState => !previousState);
-
-  const onCancel = () => {
-    console.log('Hello World!')
-  }
 
   useEffect(() => {
     switch (datePeriod) {  

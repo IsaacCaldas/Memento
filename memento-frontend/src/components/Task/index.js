@@ -1,5 +1,5 @@
 import { useState, useContext } from 'react'
-import { StyleSheet, View, TouchableOpacity } from 'react-native'
+import { StyleSheet, View, TouchableWithoutFeedback } from 'react-native'
 import Swipeable from 'react-native-gesture-handler/Swipeable'
 import moment from 'moment';
 import 'moment/locale/pt-br'
@@ -21,12 +21,13 @@ import {
 
 export default function TaskItem({
   id, description, done, 
-  updated_at, handleTask
+  updated_at, handleTask, estimated_at
 }) {
 
   const { theme } = useContext(Context)
 
-  const done_date = moment(updated_at).locale('pt-br').format('ddd, D [de] MMMM')
+  const date = done ? updated_at : estimated_at
+  const done_date = moment(date).locale('pt-br').format('ddd, D [de] MMMM [de] YYYY')
 
   return (
     <Swipeable
@@ -35,20 +36,20 @@ export default function TaskItem({
       // renderLeftActions={leftSwipeActions}
       // onSwipeableLeftOpen={() => swipeFromLeftOpen(id)}
     >  
-      <TouchableOpacity onPress={() => handleTask(id)}>
+      <TouchableWithoutFeedback onPress={() => handleTask(id)}>
         <Task theme_context={theme}> 
           <CheckBall isDone={done} theme_context={theme}> 
-            {done && <IconFA name="check" size={15} color="#fff" />}
+            {done && <IconFA name="check" size={20} color="#fff" />}
           </CheckBall>
           <View style={styles.labelArea}>
             <Label tick={done} size={16} theme_context={theme}>{description}</Label>
             <Label weight='bold' size={12} theme_context={theme} 
             color={theme ? '#222a' : '#efefefaa'}>
-              {done && `${done_date}`}
+              {done ? 'Finalizado em ' : 'Finalizar até '}{`${done_date}`}
             </Label>
           </View>
         </Task>
-      </TouchableOpacity>
+      </TouchableWithoutFeedback>
     </Swipeable>
   )
 }
