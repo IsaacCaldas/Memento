@@ -5,8 +5,8 @@ exports.up = function(knex) {
     table.string('email').notNull().unique()
     table.string('password').notNull()
   })
-}
+};
 
 exports.down = function(knex) {
   return knex.schema.dropTable('users')
-}
+};

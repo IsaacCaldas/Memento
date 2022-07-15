@@ -3,10 +3,10 @@ const moment = require('moment')
 module.exports = app => {
 
   const index = (req, res) => {
-    const date = req.query.date ? req.query.date : moment().endOf('day').toDate()
+    const date_period = req.query.date_period ? req.query.date_period : moment().endOf('day').toDate()
 
     app.db('tasks').where({ user_id: req.user.id })
-      .where('created_at', '<=', date).orderBy('created_at')
+      .where('estimated_at', '<=', date_period).orderBy('created_at')
       .then(tasks => res.json(tasks))
       .catch(error => res.status(500).json(error))
   }
@@ -36,14 +36,14 @@ module.exports = app => {
       }).catch(error => res.status(500).json(error))
   }
 
-  const updateDoneAt = (req, res, done_at) => {
+  const updateDoneAt = (req, res, done, updated_at) => {
     app.db('tasks').where({ id: req.params.id, user_id: req.user.id })
-      .update({ done_at })
+      .update({ done, updated_at })
       .then(_ => res.status(204).send())
       .catch(error => res.status(400).json(error))
   }
 
-  const toggleDoneAt = (req, res) => {
+  const toggleDone = (req, res) => {
     app.db('tasks').where({ id: req.params.id, user_id: req.user.id })
       .first()
       .then(task => {
@@ -52,11 +52,12 @@ module.exports = app => {
           return res.status(400).send(msg)        
         }
 
-        const done_at = task.done_at ? null : new Date()
-        updateDoneAt(req, res, done_at)
+        const done = !task.done
+        const updated_at = new Date()
+        updateDoneAt(req, res, done, updated_at)
 
       }).catch(error => res.status(500).json(error))
   }
 
-  return { index, create, remove, toggleDoneAt  }
+  return { index, create, remove, toggleDone  }
 }
