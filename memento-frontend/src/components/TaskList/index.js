@@ -1,7 +1,7 @@
 import { useState, useEffect, useRef, useContext } from 'react'
 import { StyleSheet, View, FlatList, ActivityIndicator, Platform, Alert } from 'react-native'
 import { Picker } from '@react-native-picker/picker';
-import 'moment/locale/pt-br'
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 import { Context } from '../../context/context'
 import { tasks_list } from './tasks';
@@ -28,6 +28,17 @@ export default function TaskList() {
     { id: 2, name: "Este mês" }
   ]
 
+  useEffect(async () => {
+    let [tasks_arr, visibleTasks_arr] = await Promise.all([
+      AsyncStorage.getItem('tasks'), AsyncStorage.getItem('visibleTasks')])
+
+    tasks_arr = JSON.parse(tasks_arr) || tasks
+    visibleTasks_arr = JSON.parse(visibleTasks_arr) || visibleTasks
+
+    setTasks(tasks_arr)
+    setTaskVisibility(visibleTasks_arr)
+  }, [])
+
   useEffect(() => {
     handleVisibility()
   }, [hiddenTasks])
@@ -42,6 +53,9 @@ export default function TaskList() {
     }
 
     setTaskVisibility(visible_tasks)
+
+    AsyncStorage.setItem('tasks', JSON.stringify(tasks))
+    AsyncStorage.setItem('visibleTasks', JSON.stringify(visibleTasks))
   }
 
   function handleTask(id) {

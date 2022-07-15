@@ -5,6 +5,8 @@ import { ThemeContext } from './src/context/context'
 
 import Home from './src/pages/Home'
 
+console.disableYellowBox = true;
+
 export default function App() {
   return (
     <ThemeContext> 
