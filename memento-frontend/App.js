@@ -4,6 +4,7 @@ import { StyleSheet, SafeAreaView, View } from 'react-native'
 import { ThemeContext } from './src/context/context'
 
 import Home from './src/pages/Home'
+import Auth from './src/pages/Auth'
 
 console.disableYellowBox = true;
 
@@ -11,7 +12,7 @@ export default function App() {
   return (
     <ThemeContext> 
       <View style={styles.container}>
-        <Home/>
+        <Auth/>
       </View>
     </ThemeContext>
   )
@@ -21,6 +22,6 @@ export default function App() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#333'
+    // backgroundColor: '#333'
   }
 });
