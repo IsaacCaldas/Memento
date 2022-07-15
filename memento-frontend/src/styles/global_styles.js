@@ -4,6 +4,7 @@ export const Label = styled.Text`
   color: ${({color, theme_context}) => color ? color : theme_context ? '#222' : '#efefef'};
   font-size: ${({size}) => size ? size : '20'}px;
   font-weight: ${({weight}) => weight ? weight : 'normal'};
+  margin-top: ${({top}) => top ? top : 0}px;
   margin-bottom: ${({bottom}) => bottom ? bottom : 0}px;
   text-decoration: ${({tick}) => tick ? 'line-through' : 'none'};
   text-decoration-color: ${({theme_context}) => theme_context ? '#222' : '#efefef'};
@@ -28,10 +29,11 @@ export const ButtonLabel = styled.Text`
 `
 export const Input = styled.TextInput`
   width: 100%;
-  height: 40px;
-  padding: 15px;
+  height: 50px;
+  padding: 10px;
   margin: 10px 0;
   background-color: ${({theme_context}) => theme_context ? '#dfdfdf' : '#2c2c2c'};
   border: none;
   border-radius: 5px;
+  font-size: 18px;
 `

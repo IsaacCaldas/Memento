@@ -13,27 +13,8 @@ export default function Header() {
 
   const { theme, setTheme, datePeriod, 
     isVisible, setVisibility,
-    hiddenTasks, setHiddenTasks
+    hiddenTasks, setHiddenTasks, bg_theme
   } = useContext(Context);
-
-  const display_colors = ['#468a6a', '#4e69ed', '#bf0a4c']
-
-  const [bg_theme, setBgTheme] = useState()
-
-  useEffect(() => {
-    switch (datePeriod) {  
-      case 'Esta semana':
-        setBgTheme(display_colors[1])
-        break
-      case 'Este mês':
-        setBgTheme(display_colors[2])
-        break
-      case 'Hoje':
-      default:
-        setBgTheme(display_colors[0])
-        break
-    }
-  }, [datePeriod])
 
   return (
     <Container bold={true}>

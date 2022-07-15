@@ -21,7 +21,8 @@ import {
 
 export default function TaskItem({
   id, description, done, 
-  updated_at, handleTask, estimated_at
+  updated_at, handleTask, estimated_at,
+  handleDeleteTask
 }) {
 
   const { theme } = useContext(Context)
@@ -32,7 +33,7 @@ export default function TaskItem({
   return (
     <Swipeable
       renderRightActions={rightSwipeActions}
-      onSwipeableRightOpen={() => swipeFromRightOpen(id)}
+      onSwipeableRightOpen={() => swipeFromRightOpen(id, handleDeleteTask)}
       // renderLeftActions={leftSwipeActions}
       // onSwipeableLeftOpen={() => swipeFromLeftOpen(id)}
     >  

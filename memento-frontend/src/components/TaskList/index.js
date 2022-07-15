@@ -1,5 +1,5 @@
-import { useState, useEffect, useContext } from 'react'
-import { StyleSheet, View, FlatList, ActivityIndicator, Platform } from 'react-native'
+import { useState, useEffect, useRef, useContext } from 'react'
+import { StyleSheet, View, FlatList, ActivityIndicator, Platform, Alert } from 'react-native'
 import { Picker } from '@react-native-picker/picker';
 import 'moment/locale/pt-br'
 
@@ -12,12 +12,15 @@ import InputTask from '../InputTask';
 
 export default function TaskList() {
 
-  const { theme, isVisible, datePeriod, setDatePeriod, hiddenTasks } = useContext(Context)
+  const { theme, isVisible, setVisibility, datePeriod, 
+    setDatePeriod, hiddenTasks, bg_theme } = useContext(Context)
 
   // const tasks = null
   const [tasks, setTasks] = useState(tasks_list)
   const [visibleTasks, setTaskVisibility] = useState()
   const [pickerIos, setIsIos] = useState(false)
+
+  const pickerRef = useRef();
 
   const date_period = [
     { id: 0, name: "Hoje" }, 
@@ -59,32 +62,66 @@ export default function TaskList() {
     color: theme ? '#222' : '#efefef',
   }
 
+  // FOR ANDROID
+  const open = () => pickerRef.current.focus();
+  const close = () => pickerRef.current.blur();
+
+  function handleSaveTask(new_task) {
+    const { description } = new_task
+
+    if (!description || !description.trim()) {
+      return Alert.alert('Dados incompletos', 'Preencha a descrição antes de salvar!')
+    }
+
+    let tasks_array = tasks
+    new_task.id = tasks_array.length
+    tasks_array.push(new_task)
+    setTasks(tasks_array)
+    setVisibility(false)
+    handleVisibility()
+  }
+
+  function handleDeleteTask(id) {
+    let array_with_task_deleted = tasks.filter(task => task.id !== id)
+    setTasks(array_with_task_deleted)
+    handleVisibility()
+  }
+  
   return (
     <View style={[styles.container, { backgroundColor: theme ? '#fcfcfc' : '#212121'}]}>
       { tasks ? 
         <>
-          { isVisible ? <InputTask/>
+          { isVisible ? <InputTask handleSaveTask={handleSaveTask}/>
           :
           <>
             {Platform.OS !== 'ios' ? 
               <>
                 <Picker style={[styles.picker, others]}
-                  selectedValue={datePeriod}
-                  onValueChange={(itemValue, itemIndex) => {setDatePeriod(itemValue)}}
-                >
+                ref={pickerRef}
+                selectedValue={datePeriod}
+                onValueChange={(itemValue, itemIndex) => {setDatePeriod(itemValue)}}
+                itemStyle={{ color: theme ? '#555' : '#efefef'
+                }}>
                   {date_period.map(date => <Picker.Item label={date.name} key={date.id} value={date.name} /> )}
                 </Picker>
               </>
             :
               <>
-                <Button bg_color={bgTheme} onPress={() => setIsIos(!pickerIos)}>
-                  <ButtonLabel bold>{pickerIos ? 'Salvar' : 'Selecionar período'}</ButtonLabel>
+                <Button bg_color={bg_theme} style={{width: '100%', borderRadius: 0}}
+                onPress={() => setIsIos(!pickerIos)}
+                >
+                  <ButtonLabel bold>
+                    {pickerIos ? 'Salvar' : 'Selecionar período'}
+                  </ButtonLabel>
                 </Button>
                 { pickerIos && 
                   <Picker style={{marginBottom: 100}}
-                    selectedValue={datePeriod}
-                    onValueChange={(itemValue, itemIndex) => {setDatePeriod(itemValue)}}
-                  >
+                  selectedValue={datePeriod}
+                  onValueChange={(itemValue, itemIndex) => {setDatePeriod(itemValue)}}
+                  itemStyle={{ 
+                    color: theme ? '#444' : '#efefef',
+                    marginBottom: -120, marginTop: -10
+                  }}>
                     {date_period.map(date => <Picker.Item label={date.name} key={date.id} value={date.name} /> )}
                   </Picker>
                 }
@@ -93,11 +130,12 @@ export default function TaskList() {
             <FlatList
               data={visibleTasks}
               keyExtractor={item => item.id.toString()}
-              renderItem={({ item, index }) => <Task key={index} id={item.id} 
-                description={item.description} done={item.done} estimated_at={item.estimated_at}
+              renderItem={({ item, index }) => (
+                <Task key={index} id={item.id} done={item.done}
+                description={item.description} estimated_at={item.estimated_at}
                 updated_at={item.updated_at} created_at={item.created_at}
-                handleTask={handleTask}/>
-              }
+                handleTask={handleTask} handleDeleteTask={handleDeleteTask}/>
+              )}
             />
           </>
           }

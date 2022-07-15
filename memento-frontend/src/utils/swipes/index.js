@@ -13,6 +13,10 @@ export const rightSwipeActions = () => {
     </View>
   )
 }
+export const swipeFromRightOpen = (id, handleDeleteTask) => {
+  handleDeleteTask(id)
+}
+
 // export const leftSwipeActions = () => {
 //   return (
 //     <View style={[styles.swipe, styles.leftSwipe]}>
@@ -25,8 +29,6 @@ export const rightSwipeActions = () => {
 //   )
 // }
 
-export const swipeFromRightOpen = async (item) => {
-}
 // export const swipeFromLeftOpen = async (item) => {
 // }
 

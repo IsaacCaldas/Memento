@@ -7,7 +7,7 @@ import 'moment/locale/pt-br'
 import { Context } from '../../context/context'
 import { Input, Label, Button, ButtonLabel  } from '../../styles/global_styles'
 
-export default function InputTask() {
+export default function InputTask({handleSaveTask}) {
 
   const { theme, isVisible, datePeriod } = useContext(Context);
 
@@ -15,11 +15,25 @@ export default function InputTask() {
   const [dateTime, setDateTime] = useState(new Date())
   const [showDatePicker, setShowDatePicker] = useState(false)
   const [bgTheme, setBgTheme] = useState('#468a6a')
+  const display_colors = ['#468a6a', '#4e69ed', '#bf0a4c']
 
   const addTask = () => {
-    console.log('Hello World')
+    
+    let new_task = {
+      description,
+      done: false,
+      estimated_at: dateTime,
+      created_at: new Date(),
+      updated_at: new Date(),
+      user_id: 0
+    }
+
+    handleSaveTask && handleSaveTask(new_task)
+
+    setDescription('')
+    setDateTime(new Date())
+    setShowDatePicker(false)
   }
-  const display_colors = ['#468a6a', '#4e69ed', '#bf0a4c']
 
   useEffect(() => {
     switch (datePeriod) {  
@@ -38,10 +52,13 @@ export default function InputTask() {
 
   datePicker = () => {
     let datePicker = <DateTimePicker 
-      value={dateTime} mode='date'
+      mode='date'
+      value={dateTime} 
+      minimumDate={new Date()}
       onChange={(_, date) => {
         setDateTime(date), setShowDatePicker(false)
       }}
+      textColor={theme ? '#444' : '#efefef'}
     />
 
     const dateString = moment(dateTime).format('ddd, D [de] MMMM [de] YYYY')
@@ -70,6 +87,8 @@ export default function InputTask() {
         placeholder="Descrição da tarefa"          
         placeholderTextColor="#555"
       />
+
+      <Label color={theme ? "#333" : "#efefef"} size={18} weight='bold' top={10} bottom={10}>Data estimada para término</Label>
       {datePicker()}
       {/* <Input
         theme_context={theme}
@@ -78,7 +97,8 @@ export default function InputTask() {
         placeholder="Data limite para término"          
         placeholderTextColor="#555"
       /> */}
-      <Button bg_color={bgTheme} onPress={() => addTask()} style={{marginVertical: 10, width: '100%'}}>
+      <Button bg_color={bgTheme} onPress={() => addTask()} 
+      style={{marginVertical: 10, width: '100%'}}>
         <ButtonLabel bold>Salvar</ButtonLabel>
       </Button>
     </View>
