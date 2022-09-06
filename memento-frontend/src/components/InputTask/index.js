@@ -1,6 +1,6 @@
 import { useState, useEffect, useContext } from 'react'
 import { View, StyleSheet, Platform } from 'react-native'
-import DateTimePicker from '@react-native-community/datetimepicker'
+// import DateTimePicker from '@react-native-community/datetimepicker'
 import moment from 'moment';
 import 'moment/locale/pt-br'
 
@@ -50,32 +50,32 @@ export default function InputTask({handleSaveTask}) {
     }
   }, [datePeriod])
 
-  datePicker = () => {
-    let datePicker = <DateTimePicker 
-      mode='date'
-      value={dateTime} 
-      minimumDate={new Date()}
-      onChange={(_, date) => {
-        setDateTime(date), setShowDatePicker(false)
-      }}
-      textColor={theme ? '#444' : '#efefef'}
-    />
+  // datePicker = () => {
+  //   let datePicker = <DateTimePicker 
+  //     mode='date'
+  //     value={dateTime} 
+  //     minimumDate={new Date()}
+  //     onChange={(_, date) => {
+  //       setDateTime(date), setShowDatePicker(false)
+  //     }}
+  //     textColor={theme ? '#444' : '#efefef'}
+  //   />
 
-    const dateString = moment(dateTime).format('ddd, D [de] MMMM [de] YYYY')
+  //   const dateString = moment(dateTime).format('ddd, D [de] MMMM [de] YYYY')
     
-    if(Platform.OS === 'android') {
-      datePicker = (
-        <View>
-          <Button bg_color={bgTheme} onPress={() => setShowDatePicker(true)}>
-            <ButtonLabel bold>{dateString}</ButtonLabel>
-          </Button>
-          {showDatePicker && datePicker}
-        </View>
-      )
-    }
+  //   if(Platform.OS === 'android') {
+  //     datePicker = (
+  //       <View>
+  //         <Button bg_color={bgTheme} onPress={() => setShowDatePicker(true)}>
+  //           <ButtonLabel bold>{dateString}</ButtonLabel>
+  //         </Button>
+  //         {showDatePicker && datePicker}
+  //       </View>
+  //     )
+  //   }
 
-    return datePicker
-  }
+  //   return datePicker
+  // }
   
   return (
     <View style={styles.inputArea}>
@@ -89,14 +89,14 @@ export default function InputTask({handleSaveTask}) {
       />
 
       <Label color={theme ? "#333" : "#efefef"} size={18} weight='bold' top={10} bottom={10}>Data estimada para término</Label>
-      {datePicker()}
-      {/* <Input
+      {/* {datePicker()} */}
+      <Input
         theme_context={theme}
-        onChangeText={(text) => setDateTime(text)}
-        value={dateTime}
+        onChangeText={(text) => setDateTime(moment().endOf('day').toDate())}
+        value={moment().endOf('day').toDate()}
         placeholder="Data limite para término"          
         placeholderTextColor="#555"
-      /> */}
+      />
       <Button bg_color={bgTheme} onPress={() => addTask()} 
       style={{marginVertical: 10, width: '100%'}}>
         <ButtonLabel bold>Salvar</ButtonLabel>

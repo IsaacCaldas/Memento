@@ -2,6 +2,7 @@ import { useState, useEffect, useRef, useContext } from 'react'
 import { StyleSheet, View, FlatList, ActivityIndicator, Platform, Alert } from 'react-native'
 import { Picker } from '@react-native-picker/picker';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import axios from 'axios'
 
 import { Context } from '../../context/context'
 import { tasks_list } from './tasks';
@@ -10,13 +11,16 @@ import { Label, Button, ButtonLabel  } from '../../styles/global_styles'
 import Task from '../Task'
 import InputTask from '../InputTask';
 
+import { server } from '../../utils/common';
+import moment from 'moment';
+
 export default function TaskList() {
 
   const { theme, isVisible, setVisibility, datePeriod, 
     setDatePeriod, hiddenTasks, bg_theme } = useContext(Context)
 
-  // const tasks = null
-  const [tasks, setTasks] = useState(tasks_list)
+  // const tasks = null 
+  const [tasks, setTasks] = useState([])
   const [visibleTasks, setTaskVisibility] = useState()
   const [pickerIos, setIsIos] = useState(false)
 
@@ -28,16 +32,17 @@ export default function TaskList() {
     { id: 2, name: "Este mês" }
   ]
 
-  useEffect(async () => {
-    let [tasks_arr, visibleTasks_arr] = await Promise.all([
-      AsyncStorage.getItem('tasks'), AsyncStorage.getItem('visibleTasks')])
+  async function loadTasks() {
+    await axios.get(`http://localhost:3000/tasks`)
+      .then(res => {
+        console.log('OIIIII')
+        setTasks(res.data)
+        handleVisibility()
+      })
+      .catch(err => console.log(err))
+  }
 
-    tasks_arr = JSON.parse(tasks_arr) || tasks
-    visibleTasks_arr = JSON.parse(visibleTasks_arr) || visibleTasks
-
-    setTasks(tasks_arr)
-    setTaskVisibility(visibleTasks_arr)
-  }, [])
+  useEffect(() => loadTasks(), [])
 
   useEffect(() => {
     handleVisibility()
@@ -53,21 +58,13 @@ export default function TaskList() {
     }
 
     setTaskVisibility(visible_tasks)
-
-    AsyncStorage.setItem('tasks', JSON.stringify(tasks))
-    AsyncStorage.setItem('visibleTasks', JSON.stringify(visibleTasks))
   }
 
-  function handleTask(id) {
-    let arr_changed = [...tasks]
-    arr_changed.map(task => {
-      if (task.id == id) {
-        task.done ? task.done = false : task.done = true
-        task.updated_at = new Date()
-      }
-    })
-    setTasks(arr_changed)
-    handleVisibility()
+  async function handleTask(id) {
+    await axios.put(`http://localhost:3000/tasks/${id}/toggleDoneAt`).then(res => {
+      loadTasks()
+      handleVisibility()
+    }).catch(err => console.log(err))
   }
 
   const others = {
@@ -80,25 +77,27 @@ export default function TaskList() {
   const open = () => pickerRef.current.focus();
   const close = () => pickerRef.current.blur();
 
-  function handleSaveTask(new_task) {
+  async function handleSaveTask(new_task) {
     const { description } = new_task
 
     if (!description || !description.trim()) {
       return Alert.alert('Dados incompletos', 'Preencha a descrição antes de salvar!')
     }
 
-    let tasks_array = tasks
-    new_task.id = tasks_array.length
-    tasks_array.push(new_task)
-    setTasks(tasks_array)
-    setVisibility(false)
-    handleVisibility()
+    await axios.post(`http://localhost:3000/tasks`, {  
+      description: new_task.description,
+      estimated_at: new_task.estimated_at,
+      done: new_task.done,
+      user_id: 1
+    }).then(res => {
+      setVisibility(!isVisible)
+      loadTasks()
+    }).catch(err => console.log(err))
   }
 
-  function handleDeleteTask(id) {
-    let array_with_task_deleted = tasks.filter(task => task.id !== id)
-    setTasks(array_with_task_deleted)
-    handleVisibility()
+  async function handleDeleteTask(id) {
+    await axios.delete(`http://localhost:3000/tasks/${id}`)
+    loadTasks()
   }
   
   return (
