@@ -10,10 +10,11 @@ module.exports = app => {
   const create = (req, res) => {
     hashGenerator(req.body.password, hash => {
       const password = hash 
+      console.log(req.body)
       app.db('users').insert({
         name: req.body.name,
         email: req.body.email,
-        password
+        password: password
       }).then(_ => res.status(204).send())
         .catch(err => res.status(500).json(err))
     })
